@@ -1,0 +1,70 @@
+:root{--lime:#ff2540!important;--lime-hot:#ff5d70!important;--lime-soft:#ff9aaa!important;--orange:#ff3d42!important;--red:#ff2540!important}
+
+html,body,#root{background:#ff0018!important;color:#fff2f3}
+body{overflow-x:hidden}
+
+/* Kill legacy green decorative layers */
+.forge-grid,.forge-noise,.hero-ring,.final-grid{display:none!important}
+
+/* Main landing: RED FIELD + SPARSE PARTICLES + MODEL */
+.forge-landing,.red-field-landing{background:#ff0018!important;color:#fff2f3!important}
+.forge-canvas-wrap{background:#ff0018!important}
+.forge-canvas-wrap canvas{background:#ff0018!important}
+.forge-landing .hero-vignette,.red-vignette{background:linear-gradient(180deg,rgba(110,0,9,.10),rgba(110,0,9,.12))!important}
+.forge-hero:after{background:linear-gradient(180deg,rgba(125,0,10,.08),transparent 34%,rgba(125,0,10,.14))!important}
+.forge-landing .hero-kicker,.forge-landing .hero-meta,.forge-landing .forge-side-rail{color:rgba(255,235,236,.72)!important}
+.forge-landing .hero-micro,.forge-landing .hero-progress strong,.forge-landing .section-index,.forge-landing .section-action{color:#fff!important}
+.forge-landing .hero-title,.forge-landing .hero-word.title-accent{color:#fff!important}
+.forge-landing .hero-word.title-offset{color:#ffd5d8!important}
+.forge-landing .hero-title b{color:#fff!important}
+.forge-landing .hero-sub{color:rgba(255,239,240,.82)!important}
+.forge-landing .hero-bottom-scroll,.forge-landing .forge-progress{color:rgba(255,230,232,.72)!important}
+.forge-landing .forge-progress strong{color:#fff!important}
+.forge-landing .forge-progress i{background:linear-gradient(#fff,transparent)!important}
+.forge-landing .ghost-cta{border-color:rgba(255,255,255,.5)!important;color:#fff!important;background:rgba(110,0,8,.14)!important}
+.forge-landing .ghost-cta:hover{border-color:#fff!important;background:rgba(255,255,255,.08)!important;color:#fff!important}
+
+/* All inner pages: red background with only sparse particle backdrop */
+.cinematic-backdrop,.red-only-backdrop,.cinematic-backdrop canvas{background:#ff0018!important}
+.cinematic-backdrop:before{background:rgba(110,0,8,.04)!important}
+.cinematic-backdrop:after{display:none!important}
+
+/* Remove green legacy atmospheric overlays */
+.page-shell,.page-shell:before,.dashboard-page:before,.training-page:before,.anatomy-page:before,.nutrition-page:before,.progress-page:before,.profile-page:before{background:#ff0018!important}
+.page-shell:after{display:none!important}
+
+/* Keep UI glass, but force red/white accents everywhere */
+.glass-commandbar,.glass-sidebar,.glass-mobile-nav{border-color:rgba(255,255,255,.22)!important;background:rgba(30,0,4,.52)!important;box-shadow:0 20px 70px rgba(60,0,5,.34)!important}
+.glass-commandbar:before,.glass-sidebar:before{background:rgba(255,255,255,.035)!important}
+.glass-commandbar:after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent)!important}
+.glass-nav-link:before{background:linear-gradient(90deg,rgba(255,255,255,.08),transparent)!important}
+.glass-nav-link.active,.glass-nav-link:hover{border-color:rgba(255,255,255,.24)!important;background:rgba(255,255,255,.05)!important}
+.nav-active-dot,.status-dot,.live-pulse{background:#fff!important;box-shadow:0 0 14px #fff!important}
+.nav-icon{border-color:rgba(255,255,255,.15)!important}
+.glass-nav-link.active .nav-icon,.glass-nav-link:hover .nav-icon{border-color:rgba(255,255,255,.32)!important;color:#fff!important;background:rgba(255,255,255,.06)!important}
+
+.magnetic-button{background:#fff!important;color:#8d0010!important;border-color:#fff!important;box-shadow:0 15px 40px rgba(90,0,8,.25)!important}
+.magnetic-button.ghost{background:transparent!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important}
+.progress-fill{background:#fff!important;box-shadow:0 0 14px rgba(255,255,255,.38)!important}
+
+/* Cards keep black glass against red world */
+.glass-panel,.signal-panel,.discipline-panel,.roadmap-panel,.training-card,.anatomy-card,.nutrition-card,.progress-card,.profile-card{background:rgba(15,0,3,.82)!important;border-color:rgba(255,255,255,.18)!important}
+
+/* Footer */
+.beast-footer{background:#190005!important;border-top-color:rgba(255,255,255,.14)!important}
+.beast-footer:before{background:none!important}
+.footer-brand-mark{color:#fff!important;border-color:rgba(255,255,255,.34)!important;background:rgba(255,255,255,.04)!important}
+.footer-primary{background:#fff!important;color:#8d0010!important;border-color:#fff!important}
+.footer-secondary,.footer-link,.footer-column-label,.footer-manifesto p,.footer-brand-block p,.footer-bottom-bar{color:rgba(255,235,237,.72)!important}
+
+/* Prevent accidental green artifacts from legacy SVG/canvas filters */
+.red-only-backdrop,.red-field-landing,.forge-canvas-wrap{filter:none!important}
+
+@media(max-width:760px){
+  html,body,#root{background:#ff0018!important}
+  .glass-commandbar{background:rgba(30,0,4,.74)!important}
+  .forge-hero{background:#ff0018!important}
+  .forge-section,.forge-section-dark,.forge-final{background:#ff0018!important;border-top-color:rgba(255,255,255,.10)!important}
+}
+
+@media(prefers-reduced-motion:reduce){.glass-commandbar:after{animation:none!important}}
