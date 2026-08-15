@@ -3,7 +3,6 @@
 .forge-canvas-wrap { background: #010204 !important; }
 .red-field-landing, .forge-landing, .forge-canvas-wrap { color: #eef7ff !important; }
 
-/* Prevent legacy red literals from leaking through common UI states. */
 .forge-landing .hero-word.title-accent,
 .forge-landing .hero-title b,
 .forge-landing .hero-sub,
@@ -17,7 +16,6 @@
 .forge-landing .eyebrow-line,
 .forge-landing .forge-progress i { border-color: #5dbbff !important; background: #5dbbff !important; box-shadow: 0 0 18px rgba(93,187,255,.34); }
 
-/* A more expensive-looking glass surface for all dense content blocks. */
 .forge-landing .glass-panel,
 .forge-landing .onboarding-panel,
 .forge-landing .forge-section,
