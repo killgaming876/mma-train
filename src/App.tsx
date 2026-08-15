@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { AppShell } from './components/AppShell';
-import LandingPage from './pages/LandingPage';
+import LandingPage from './pages/LandingPageFixed';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const TrainingPage = lazy(() => import('./pages/TrainingPage'));
 const AnatomyPage = lazy(() => import('./pages/AnatomyPage'));
