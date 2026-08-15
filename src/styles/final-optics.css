@@ -1,32 +1,18 @@
-/* Final optical correction over legacy red WebGL content. */
-.forge-canvas-wrap canvas { filter: saturate(.76) brightness(.48) contrast(1.22) hue-rotate(205deg) !important; }
-.forge-canvas-wrap { background: #010204 !important; }
-.red-field-landing, .forge-landing, .forge-canvas-wrap { color: #eef7ff !important; }
-
+/* FINAL DARK GLASS OPTICS */
+.forge-canvas-wrap { background:#010204 !important; }
+.forge-canvas-wrap canvas { background:#010204 !important; }
+.forge-landing { color:#eef7ff !important; }
 .forge-landing .hero-word.title-accent,
 .forge-landing .hero-title b,
 .forge-landing .hero-sub,
 .forge-landing .hero-kicker,
 .forge-landing .hero-micro,
 .forge-landing .hero-footer,
-.forge-landing .hero-progress,
 .forge-landing .section-index,
-.forge-landing .section-action { color: #eaf5ff !important; }
-
+.forge-landing .section-action { color:#eaf5ff !important; }
 .forge-landing .eyebrow-line,
-.forge-landing .forge-progress i { border-color: #5dbbff !important; background: #5dbbff !important; box-shadow: 0 0 18px rgba(93,187,255,.34); }
-
-.forge-landing .glass-panel,
+.forge-landing .forge-progress i { border-color:#5dbbff !important; background:#5dbbff !important; box-shadow:0 0 18px rgba(93,187,255,.28); }
 .forge-landing .onboarding-panel,
 .forge-landing .forge-section,
-.forge-landing .forge-final,
-.forge-landing .forge-section-dark {
-  background: linear-gradient(145deg, rgba(8,15,23,.72), rgba(2,5,9,.58)) !important;
-  border-color: rgba(135,202,255,.16) !important;
-  box-shadow: 0 34px 100px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.045) !important;
-  backdrop-filter: blur(18px) saturate(145%) !important;
-}
-
-@media (max-width: 760px) {
-  .forge-canvas-wrap canvas { filter: saturate(.64) brightness(.42) contrast(1.1) hue-rotate(205deg) !important; }
-}
+.forge-landing .forge-final { background:linear-gradient(145deg,rgba(8,15,23,.72),rgba(2,5,9,.58)) !important; border-color:rgba(135,202,255,.16) !important; box-shadow:0 28px 90px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.04) !important; }
+@media(max-width:760px){.forge-canvas-wrap canvas{filter:none!important;}}
