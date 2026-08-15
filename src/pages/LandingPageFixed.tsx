@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
@@ -44,102 +43,111 @@ function InputBus() {
 
 function CameraRig() {
   const { camera } = useThree();
+  const look = useRef(new THREE.Vector3(0, 1.1, 0));
+  const targetLook = useRef(new THREE.Vector3());
   const curve = useMemo(() => new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 1.8, 9.5),
-    new THREE.Vector3(1.7, 1.5, 7),
-    new THREE.Vector3(-1.5, 1.3, 4.2),
-    new THREE.Vector3(0.8, 1.2, 1.8),
+    new THREE.Vector3(0, 1.6, 9.2),
+    new THREE.Vector3(1.3, 1.45, 8.1),
+    new THREE.Vector3(-1.1, 1.2, 6.3),
+    new THREE.Vector3(0.8, 1.0, 4.4),
   ], false, 'catmullrom', 0.7), []);
   useFrame(() => {
-    const point = curve.getPointAt(Math.min(0.92, scrollProgress * 0.92));
-    camera.position.lerp(point, 0.045);
-    const target = new THREE.Vector3(pointerX * 0.35, 1.05 + pointerY * 0.15, 0);
-    camera.lookAt(target);
-    const perspective = camera as THREE.PerspectiveCamera;
-    perspective.fov = THREE.MathUtils.lerp(46, 34, scrollProgress);
-    perspective.updateProjectionMatrix();
+    const point = curve.getPointAt(Math.min(0.9, scrollProgress * 0.88));
+    point.x += pointerX * 0.26;
+    point.y += pointerY * 0.12;
+    camera.position.lerp(point, 0.025);
+    targetLook.current.set(pointerX * 0.12, 1.15 + pointerY * 0.08, 0);
+    look.current.lerp(targetLook.current, 0.035);
+    camera.lookAt(look.current);
   });
   return null;
 }
 
-function SparseParticles() {
+function DustField() {
   const ref = useRef<THREE.Points>(null);
-  const count = 1800;
+  const count = typeof window !== 'undefined' && window.innerWidth < 760 ? 420 : 900;
   const geometry = useMemo(() => {
     const g = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     for (let i = 0; i < count; i += 1) {
-      const radius = 4 + Math.random() * 14;
+      const radius = 3.5 + Math.random() * 11;
       const angle = Math.random() * Math.PI * 2;
       positions[i * 3] = Math.cos(angle) * radius;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 11;
-      positions[i * 3 + 2] = Math.sin(angle) * radius - 3;
-      seeds[i] = Math.random() * Math.PI * 2;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 9;
+      positions[i * 3 + 2] = Math.sin(angle) * radius - 2;
+      seeds[i] = Math.random() * 6.28;
     }
     g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     g.setAttribute('aSeed', new THREE.Float32BufferAttribute(seeds, 1));
     return g;
-  }, []);
+  }, [count]);
   const material = useMemo(() => new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     uniforms: { uTime: { value: 0 } },
-    vertexShader: `attribute float aSeed; uniform float uTime; varying float vAlpha; void main(){vec3 p=position; p.x+=sin(uTime*.18+aSeed)*.12; p.y+=cos(uTime*.14+aSeed)*.1; p.z+=sin(uTime*.16+aSeed)*.1; vec4 mv=modelViewMatrix*vec4(p,1.0); gl_PointSize=1.6+1.8*(.5+.5*sin(aSeed+uTime)); gl_PointSize*=16.0/max(4.0,-mv.z); vAlpha=.2+.5*(.5+.5*sin(aSeed+uTime*.7)); gl_Position=projectionMatrix*mv;}`,
-    fragmentShader: `varying float vAlpha; void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.04,d)*vAlpha;gl_FragColor=vec4(.98,.88,.87,a);}`,
+    vertexShader: `attribute float aSeed; uniform float uTime; varying float vAlpha; void main(){vec3 p=position;p.x+=sin(uTime*.11+aSeed)*.05;p.y+=cos(uTime*.09+aSeed)*.045;p.z+=sin(uTime*.1+aSeed)*.04;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=1.25*(8.0/max(4.0,-mv.z));vAlpha=.08+.28*(.5+.5*sin(aSeed+uTime*.5));gl_Position=projectionMatrix*mv;}`,
+    fragmentShader: `varying float vAlpha;void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.08,d)*vAlpha;gl_FragColor=vec4(.32,.68,1.0,a);}`,
   }), []);
-  useFrame((state) => {
-    if (!ref.current) return;
-    material.uniforms.uTime.value = state.clock.elapsedTime;
-    ref.current.rotation.y = state.clock.elapsedTime * 0.008 + scrollProgress * 0.25;
-  });
+  useFrame((state) => { material.uniforms.uTime.value = state.clock.elapsedTime; });
   return <points ref={ref} geometry={geometry} material={material} />;
 }
 
-function Fighter() {
-  const ref = useRef<THREE.Group>(null);
-  const material = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#090909', metalness: 0.3, roughness: 0.42, clearcoat: 0.35 }), []);
-  useFrame((state, delta) => {
-    if (!ref.current) return;
-    ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, pointerX * 0.18 + scrollProgress * Math.PI * 0.8, 0.04);
-    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, pointerY * 0.06, 0.04);
-    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.9) * 0.05 + scrollProgress * 0.35;
-    ref.current.scale.setScalar(0.9 + scrollProgress * 0.16);
-    const breath = 1 + Math.sin(state.clock.elapsedTime * 1.4) * 0.012;
-    ref.current.scale.y *= breath;
+function MMAHeroModel() {
+  const group = useRef<THREE.Group>(null);
+  const skin = useMemo(() => new THREE.MeshStandardMaterial({ color: '#a9b7c2', roughness: 0.58, metalness: 0.08 }), []);
+  const suit = useMemo(() => new THREE.MeshStandardMaterial({ color: '#07101a', roughness: 0.35, metalness: 0.55 }), []);
+  const glove = useMemo(() => new THREE.MeshStandardMaterial({ color: '#0c6dbe', roughness: 0.28, metalness: 0.36, emissive: '#082746', emissiveIntensity: 0.32 }), []);
+  const edge = useMemo(() => new THREE.MeshBasicMaterial({ color: '#61c6ff', transparent: true, opacity: 0.16, wireframe: true }), []);
+
+  useFrame((state) => {
+    if (!group.current) return;
+    const targetY = pointerX * 0.22 + scrollProgress * Math.PI * 0.48;
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetY, 0.035);
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, pointerY * 0.06, 0.035);
+    group.current.position.y = Math.sin(state.clock.elapsedTime * 0.65) * 0.035 + scrollProgress * 0.12;
+    group.current.scale.setScalar(1.0 + scrollProgress * 0.08);
   });
-  const Limb = ({ x, y, z, sx, sy, sz, rz = 0 }: { x: number; y: number; z: number; sx: number; sy: number; sz: number; rz?: number }) => <mesh position={[x, y, z]} scale={[sx, sy, sz]} rotation={[0, 0, rz]} castShadow material={material}><capsuleGeometry args={[1, 1.5, 10, 18]} /></mesh>;
-  return <group ref={ref} position={[0, -2.25, 0]}>
-    <Float speed={0.9} rotationIntensity={0.05} floatIntensity={0.08}>
-      <group>
-        <mesh position={[0, 3.8, 0]} castShadow material={material}><sphereGeometry args={[0.5, 28, 22]} /></mesh>
-        <mesh position={[0, 2.55, 0]} scale={[0.96, 1.25, 0.55]} castShadow material={material}><capsuleGeometry args={[0.8, 1.45, 10, 22]} /></mesh>
-        <Limb x={-0.92} y={2.7} z={0} sx={0.22} sy={1.0} sz={0.22} rz={-0.2} />
-        <Limb x={0.92} y={2.7} z={0} sx={0.22} sy={1.0} sz={0.22} rz={0.2} />
-        <Limb x={-1.18} y={1.75} z={0} sx={0.17} sy={0.8} sz={0.17} rz={1.15} />
-        <Limb x={1.18} y={1.75} z={0} sx={0.17} sy={0.8} sz={0.17} rz={-1.15} />
-        <Limb x={-0.46} y={0.25} z={0} sx={0.29} sy={1.05} sz={0.29} />
-        <Limb x={0.46} y={0.25} z={0} sx={0.29} sy={1.05} sz={0.29} />
-        <Limb x={-0.6} y={-1.05} z={0} sx={0.31} sy={0.86} sz={0.31} />
-        <Limb x={0.6} y={-1.05} z={0} sx={0.31} sy={0.86} sz={0.31} />
-        <mesh position={[-0.62, -2.05, 0]} scale={[1.2, 0.4, 2.1]} material={material}><sphereGeometry args={[0.44, 24, 16]} /></mesh>
-        <mesh position={[0.62, -2.05, 0]} scale={[1.2, 0.4, 2.1]} material={material}><sphereGeometry args={[0.44, 24, 16]} /></mesh>
-      </group>
-    </Float>
+
+  const Limb = ({ position, scale, rotation = [0, 0, 0] }: { position: [number, number, number]; scale: [number, number, number]; rotation?: [number, number, number] }) => (
+    <mesh position={position} scale={scale} rotation={rotation} material={skin}>
+      <capsuleGeometry args={[0.34, 1.15, 4, 8]} />
+    </mesh>
+  );
+
+  return <group ref={group} position={[0.95, -2.25, 0.15]}>
+    <mesh position={[0, 3.9, 0]} material={skin}><icosahedronGeometry args={[0.5, 2]} /></mesh>
+    <mesh position={[0, 3.1, 0]} scale={[0.62, 0.28, 0.52]} material={suit}><sphereGeometry args={[0.72, 12, 8]} /></mesh>
+    <mesh position={[0, 2.55, 0]} scale={[0.9, 1.25, 0.52]} material={skin}><capsuleGeometry args={[0.68, 1.25, 5, 10]} /></mesh>
+    <mesh position={[0, 1.35, 0]} scale={[1.05, 0.5, 0.7]} material={suit}><boxGeometry args={[1.2, 0.9, 0.75]} /></mesh>
+    <Limb position={[-0.9, 2.65, 0]} scale={[0.32, 0.9, 0.32]} rotation={[0, 0, -0.22]} />
+    <Limb position={[0.9, 2.65, 0]} scale={[0.32, 0.9, 0.32]} rotation={[0, 0, 0.22]} />
+    <Limb position={[-1.28, 1.85, -0.02]} scale={[0.26, 0.72, 0.26]} rotation={[0, 0, 0.85]} />
+    <Limb position={[1.28, 1.85, -0.02]} scale={[0.26, 0.72, 0.26]} rotation={[0, 0, -0.85]} />
+    <mesh position={[-1.68, 1.52, 0]} scale={[0.5, 0.4, 0.42]} material={glove}><dodecahedronGeometry args={[0.46, 1]} /></mesh>
+    <mesh position={[1.68, 1.52, 0]} scale={[0.5, 0.4, 0.42]} material={glove}><dodecahedronGeometry args={[0.46, 1]} /></mesh>
+    <Limb position={[-0.52, 0.35, 0]} scale={[0.36, 1.15, 0.36]} />
+    <Limb position={[0.52, 0.35, 0]} scale={[0.36, 1.15, 0.36]} />
+    <Limb position={[-0.6, -1.05, 0]} scale={[0.38, 0.95, 0.38]} />
+    <Limb position={[0.6, -1.05, 0]} scale={[0.38, 0.95, 0.38]} />
+    <mesh position={[-0.63, -2.0, 0.08]} scale={[0.7, 0.22, 1.25]} material={suit}><boxGeometry args={[1.1, 0.48, 1.8]} /></mesh>
+    <mesh position={[0.63, -2.0, 0.08]} scale={[0.7, 0.22, 1.25]} material={suit}><boxGeometry args={[1.1, 0.48, 1.8]} /></mesh>
+    <mesh scale={1.55} material={edge}><icosahedronGeometry args={[1.0, 2]} /></mesh>
   </group>;
 }
 
 function MainScene() {
   return <>
-    <color attach="background" args={['#480006']} />
-    <fog attach="fog" args={['#480006', 8, 26]} />
-    <ambientLight intensity={0.9} color="#ffd8d8" />
-    <directionalLight position={[4, 7, 5]} intensity={2.6} color="#fff1f0" castShadow />
-    <pointLight position={[0, 3, 3]} intensity={3} distance={10} color="#ffd8d8" />
+    <color attach="background" args={['#010204']} />
+    <fog attach="fog" args={['#010204', 9, 24]} />
+    <ambientLight intensity={0.38} color="#a8ddff" />
+    <directionalLight position={[4, 6, 5]} intensity={1.2} color="#e1f4ff" />
+    <pointLight position={[2, 2, 2]} intensity={1.8} distance={10} color="#318cff" />
+    <pointLight position={[-3, 0, -2]} intensity={1.0} distance={8} color="#57c7ff" />
     <CameraRig />
-    <SparseParticles />
-    <Fighter />
+    <DustField />
+    <MMAHeroModel />
   </>;
 }
 
@@ -152,7 +160,7 @@ function Section({ index, title, body }: { index: string; title: string; body: s
 
 function Onboarding({ form, update, onClose, onSubmit }: { form: UserProfile; update: (key: keyof UserProfile, value: string) => void; onClose: () => void; onSubmit: (event: FormEvent) => void }) {
   return <motion.div className="onboarding-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-    <motion.form className="onboarding-panel onboarding-3d" onSubmit={onSubmit} initial={{ y: 60, opacity: 0, rotateX: 10 }} animate={{ y: 0, opacity: 1, rotateX: 0 }}>
+    <motion.form className="onboarding-panel onboarding-3d" onSubmit={onSubmit} initial={{ y: 50, opacity: 0, rotateX: 8 }} animate={{ y: 0, opacity: 1, rotateX: 0 }}>
       <button className="onboarding-close" type="button" onClick={onClose}><X size={18} /></button>
       <div className="eyebrow"><span className="eyebrow-line" /> ATHLETE DNA / CALIBRATION</div>
       <h2>Build your<br /><em>roadmap.</em></h2>
@@ -181,15 +189,15 @@ export default function LandingPageFixed() {
   useEffect(() => {
     const root = document.querySelector('.forge-landing') as HTMLElement | null;
     if (!root) return;
-    const master = ScrollTrigger.create({ trigger: root, start: 'top top', end: 'bottom bottom', scrub: true, onUpdate: (self) => { scrollProgress = self.progress; setReadout(String(Math.round(self.progress * 100)).padStart(2, '0')); } });
-    const sectionTriggers = gsap.utils.toArray<HTMLElement>('[data-scroll-section]').map((section) => gsap.fromTo(section.querySelector('.section-copy'), { y: 100, opacity: 0, clipPath: 'inset(20% 0 0 0)' }, { y: 0, opacity: 1, clipPath: 'inset(0% 0 0 0)', ease: 'none', scrollTrigger: { trigger: section, start: 'top 82%', end: 'bottom 35%', scrub: 1.1 } }).scrollTrigger);
+    const master = ScrollTrigger.create({ trigger: root, start: 'top top', end: 'bottom bottom', scrub: 0.7, onUpdate: (self) => { scrollProgress = self.progress; setReadout(String(Math.round(self.progress * 100)).padStart(2, '0')); } });
+    const sectionTriggers = gsap.utils.toArray<HTMLElement>('[data-scroll-section]').slice(1).map((section) => gsap.fromTo(section.querySelector('.section-copy'), { y: 70, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: 'top 82%', end: 'bottom 42%', scrub: 0.8 } }).scrollTrigger);
     return () => { master.kill(); sectionTriggers.forEach((trigger) => trigger?.kill()); };
   }, []);
 
-  return <div className="forge-landing red-field-landing">
+  return <div className="forge-landing">
     <InputBus />
-    <div className="forge-canvas-wrap"><Canvas shadows dpr={[1, 1.5]} camera={{ position: [0, 1.8, 9.5], fov: 46 }} gl={{ antialias: true, powerPreference: 'high-performance' }}><MainScene /></Canvas></div>
-    <div className="hero-vignette red-vignette" />
+    <div className="forge-canvas-wrap"><Canvas dpr={[0.75, 1.1]} camera={{ position: [0, 1.6, 9.2], fov: 46 }} gl={{ antialias: false, powerPreference: 'high-performance', alpha: false }}><MainScene /></Canvas></div>
+    <div className="hero-vignette" />
     <div className="forge-progress"><span>SCROLL /</span><strong>{readout}</strong><i /></div>
     <section className="forge-hero" data-scroll-section>
       <div className="hero-kicker"><span>FORGE / MMA</span><span>3D TRAINING SYSTEM</span></div>
