@@ -26,6 +26,8 @@ export function CommandCenter() {
   const [query, setQuery] = useState('');
   const [coachOpen, setCoachOpen] = useState(false);
   const [intensity, setIntensity] = useState(72);
+  const isLanding = location.pathname === '/';
+  const isProfile = location.pathname === '/profile';
 
   const roadmapProgress = roadmap.length ? Math.round((roadmap.filter((step) => step.complete).length / roadmap.length) * 100) : 0;
   const filtered = useMemo(() => commands.filter((item) => `${item.label} ${item.description}`.toLowerCase().includes(query.toLowerCase())), [query]);
@@ -34,7 +36,7 @@ export function CommandCenter() {
     const onKey = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        setOpen((value) => !value);
+        if (!isLanding) setOpen((value) => !value);
       }
       if (event.key === 'Escape') {
         setOpen(false);
@@ -43,16 +45,19 @@ export function CommandCenter() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [isLanding]);
 
   const go = (path: string) => {
     setOpen(false);
+    setCoachOpen(false);
     setQuery('');
     navigate(path);
   };
 
+  if (isLanding) return null;
+
   return <>
-    {!location.pathname.includes('/profile') && <div className="command-center-bar">
+    {!isProfile && <div className="command-center-bar">
       <button type="button" className="command-search-trigger" onClick={() => setOpen(true)} aria-label="Open command search">
         <Search size={14} /><span>SEARCH COMMANDS / TECHNIQUES / MEALS</span><kbd>⌘ K</kbd>
       </button>
@@ -65,7 +70,7 @@ export function CommandCenter() {
     </div>}
 
     <AnimatePresence>
-      {coachOpen && <motion.aside className="context-ai-bar" initial={{ opacity: 0, y: -14, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: .98 }}>
+      {coachOpen && !isProfile && <motion.aside className="context-ai-bar" initial={{ opacity: 0, y: -14, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: .98 }}>
         <div className="ai-orb"><Sparkles size={17} /></div>
         <div className="ai-copy"><span>CONTEXTUAL COACH / LIVE</span><strong>{profile?.name ? `${profile.name.toUpperCase()}, PUSH THE QUALITY.` : 'BUILD YOUR ATHLETE PROFILE FIRST.'}</strong><small>{profile ? `Current training intensity is ${intensity}%. Keep technique clean before adding volume.` : 'Your roadmap, recovery and training targets will appear here after onboarding.'}</small></div>
         <div className="ai-controls"><label>INTENSITY <b>{intensity}%</b><input aria-label="Training intensity" type="range" min="20" max="100" value={intensity} onChange={(event) => setIntensity(Number(event.target.value))} /></label><button type="button" onClick={() => go(profile ? '/training' : '/profile')}>{profile ? 'START SESSION' : 'CONFIGURE'} <ArrowUpRight size={13} /></button></div>
