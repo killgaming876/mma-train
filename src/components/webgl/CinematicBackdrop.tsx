@@ -39,6 +39,7 @@ function InputBus() {
 function CameraRig() {
   const { camera } = useThree();
   const look = useRef(new THREE.Vector3(0, 0.35, 0));
+  const targetLook = useRef(new THREE.Vector3());
   const path = useMemo(() => new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0.35, 9.8),
     new THREE.Vector3(1.9, 0.8, 8.2),
@@ -51,7 +52,8 @@ function CameraRig() {
     target.x += pointer.x * 0.35;
     target.y += pointer.y * 0.2;
     camera.position.lerp(target, 0.025);
-    look.current.lerp(new THREE.Vector3(pointer.x * 0.15, 0.45 + pointer.y * 0.1, 0), 0.035);
+    targetLook.set(pointer.x * 0.15, 0.45 + pointer.y * 0.1, 0);
+    look.current.lerp(targetLook.current, 0.035);
     camera.lookAt(look.current);
     const perspective = camera as THREE.PerspectiveCamera;
     perspective.fov = THREE.MathUtils.lerp(45, 37, scrollProgress);
@@ -88,8 +90,8 @@ function ParticleField() {
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     uniforms: { uTime: { value: 0 }, uMouse: { value: new THREE.Vector2() }, uScroll: { value: 0 } },
-    vertexShader: `attribute float aSeed; attribute float aScale; uniform float uTime; uniform vec2 uMouse; uniform float uScroll; varying float vAlpha; void main(){vec3 p=position; float wave=sin(uTime*.22+aSeed+p.x*.08)*.07; p.x+=sin(uTime*.11+aSeed)*.12+uMouse.x*.06; p.y+=cos(uTime*.14+aSeed)*.11+wave; p.z+=sin(uTime*.13+aSeed)*.09+uScroll*.15; vec4 mv=modelViewMatrix*vec4(p,1.0); gl_PointSize=(1.1+aScale*1.8)*(15.0/max(4.0,-mv.z)); vAlpha=.16+.42*(.5+.5*sin(aSeed+uTime*.55)); gl_Position=projectionMatrix*mv;}`,
-    fragmentShader: `varying float vAlpha; void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.03,d)*vAlpha;vec3 c=mix(vec3(.24,.58,1.0),vec3(.47,.96,1.0),a);gl_FragColor=vec4(c,a);}`,
+    vertexShader: `attribute float aSeed; attribute float aScale; uniform float uTime; uniform vec2 uMouse; uniform float uScroll; varying float vAlpha; void main(){vec3 p=position;float wave=sin(uTime*.22+aSeed+p.x*.08)*.07;p.x+=sin(uTime*.11+aSeed)*.12+uMouse.x*.06;p.y+=cos(uTime*.14+aSeed)*.11+wave;p.z+=sin(uTime*.13+aSeed)*.09+uScroll*.15;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=(1.1+aScale*1.8)*(15.0/max(4.0,-mv.z));vAlpha=.16+.42*(.5+.5*sin(aSeed+uTime*.55));gl_Position=projectionMatrix*mv;}`,
+    fragmentShader: `varying float vAlpha;void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.03,d)*vAlpha;vec3 c=mix(vec3(.24,.58,1.0),vec3(.47,.96,1.0),a);gl_FragColor=vec4(c,a);}`,
   }), []);
   useFrame((state) => {
     material.uniforms.uTime.value = state.clock.elapsedTime;
@@ -143,8 +145,8 @@ function LiquidField() {
     transparent: true,
     depthWrite: false,
     uniforms: { uTime: { value: 0 }, uMouse: { value: new THREE.Vector2() }, uScroll: { value: 0 } },
-    vertexShader: `uniform float uTime; uniform vec2 uMouse; uniform float uScroll; varying vec2 vUv; void main(){vUv=uv;vec3 p=position;float d=distance(uv,vec2(.5)+uMouse*.12);p.z+=sin(d*24.0-uTime*1.5)*exp(-d*8.0)*.22;p.z+=sin((uv.x+uv.y+uTime*.05)*18.0)*.04;p.z+=uScroll*.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
-    fragmentShader: `uniform float uTime; varying vec2 vUv; void main(){vec2 p=vUv-.5;float r=length(p);float ring=smoothstep(.17,0.0,abs(r-.22))+smoothstep(.28,0.0,abs(r-.36))*.45;float scan=.45+.55*sin(vUv.y*100.0+uTime*.25);float glow=exp(-r*5.0)*.55;vec3 c=vec3(.03,.15,.28)+vec3(0.0,.2,.42)*(ring+glow)*scan;float alpha=.08+ring*.12+glow*.08;gl_FragColor=vec4(c,alpha);}`,
+    vertexShader: `uniform float uTime;uniform vec2 uMouse;uniform float uScroll;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;float d=distance(uv,vec2(.5)+uMouse*.12);p.z+=sin(d*24.0-uTime*1.5)*exp(-d*8.0)*.22;p.z+=sin((uv.x+uv.y+uTime*.05)*18.0)*.04;p.z+=uScroll*.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
+    fragmentShader: `uniform float uTime;varying vec2 vUv;void main(){vec2 p=vUv-.5;float r=length(p);float ring=smoothstep(.17,0.0,abs(r-.22))+smoothstep(.28,0.0,abs(r-.36))*.45;float scan=.45+.55*sin(vUv.y*100.0+uTime*.25);float glow=exp(-r*5.0)*.55;vec3 c=vec3(.03,.15,.28)+vec3(0.0,.2,.42)*(ring+glow)*scan;float alpha=.08+ring*.12+glow*.08;gl_FragColor=vec4(c,alpha);}`,
   }), []);
   useFrame((state) => {
     material.uniforms.uTime.value = state.clock.elapsedTime;
