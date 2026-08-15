@@ -7,6 +7,7 @@ import './styles/landing.css';
 import './styles/cinematic-shell.css';
 import './styles/red-system.css';
 import './styles/red-field.css';
+import './styles/red-only-purge.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
