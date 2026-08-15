@@ -5,6 +5,7 @@ import App from './App';
 import './styles/globals.css';
 import './styles/landing.css';
 import './styles/cinematic-shell.css';
+import './styles/red-system.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
