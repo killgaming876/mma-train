@@ -1,0 +1,16 @@
+import{c as l,u as c,r as d,b as t,j as e,P as o,A as r,M as x}from"./index-BB6kc6BJ.js";import{R as h}from"./rotate-ccw-HW2Agi5B.js";/**
+ * @license lucide-react v0.468.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const m=l("Crosshair",[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["line",{x1:"22",x2:"18",y1:"12",y2:"12",key:"l9bcsi"}],["line",{x1:"6",x2:"2",y1:"12",y2:"12",key:"13hhkx"}],["line",{x1:"12",x2:"12",y1:"6",y2:"2",key:"10w3f3"}],["line",{x1:"12",x2:"12",y1:"22",y2:"18",key:"15g9kq"}]]);/**
+ * @license lucide-react v0.468.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const j=l("Info",[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M12 16v-4",key:"1dtifu"}],["path",{d:"M12 8h.01",key:"e9boi3"}]]);/**
+ * @license lucide-react v0.468.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const p=l("Move3d",[["path",{d:"M5 3v16h16",key:"1mqmf9"}],["path",{d:"m5 19 6-6",key:"jh6hbb"}],["path",{d:"m2 6 3-3 3 3",key:"tkyvxa"}],["path",{d:"m18 16 3 3-3 3",key:"1d4glt"}]]);function g(){const n=c(a=>a.selectedBodyPart),i=c(a=>a.selectBodyPart),s=d.useMemo(()=>t.find(a=>a.id===n)??t[1],[n]);return e.jsxs("div",{className:"page-shell anatomy-page",children:[e.jsxs("div",{className:"page-top-row",children:[e.jsx(o,{eyebrow:"STRIKING ROOM / BODY MECHANICS",title:"Read the frame.",detail:"Anatomy, balance, and protective positioning — visualized."}),e.jsxs("div",{className:"anatomy-tools",children:[e.jsxs("span",{children:[e.jsx(p,{size:14})," DRAG TO ORBIT"]}),e.jsxs("span",{children:[e.jsx(m,{size:14})," TAP A NODE"]})]})]}),e.jsxs("div",{className:"anatomy-layout",children:[e.jsxs("section",{className:"anatomy-stage glass-panel",children:[e.jsx(r,{onSelect:i,selected:n}),e.jsxs("div",{className:"anatomy-stage-ui",children:[e.jsx("span",{children:"MODEL / 01"}),e.jsx("span",{children:"EDUCATIONAL MODE"}),e.jsxs("button",{onClick:()=>i(null),children:[e.jsx(h,{size:13})," RESET VIEW"]})]})]}),e.jsxs("aside",{className:"anatomy-info glass-panel",children:[e.jsxs("div",{className:"panel-topline",children:[e.jsx("span",{children:"REGION INSPECTOR"}),e.jsx(j,{size:15})]}),e.jsxs("div",{className:"target-heading",children:[e.jsx("span",{className:"target-ping"}),e.jsxs("div",{children:[e.jsx("span",{children:"TARGET REGION"}),e.jsx("h2",{children:s.label}),e.jsx("small",{children:s.region})]})]}),e.jsx("div",{className:"anatomy-rule"}),e.jsxs("div",{className:"info-block",children:[e.jsx("span",{children:"WHY IT MATTERS"}),e.jsx("p",{children:s.description})]}),e.jsxs("div",{className:"info-block",children:[e.jsx("span",{children:"DEFENSIVE CONSIDERATION"}),e.jsx("p",{children:s.defensive})]}),e.jsxs("div",{className:"info-block",children:[e.jsx("span",{children:"SAFE TRAINING DRILL"}),e.jsx("p",{children:s.drill})]}),e.jsx(x,{variant:"ghost",onClick:()=>i(null),children:"CLEAR TARGET"}),e.jsx("div",{className:"education-note",children:"For supervised education and controlled practice. This tool is not medical advice and does not encourage targeting people."})]})]})]})}export{g as default};
