@@ -6,6 +6,7 @@ import './styles/globals.css';
 import './styles/landing.css';
 import './styles/cinematic-shell.css';
 import './styles/red-system.css';
+import './styles/red-field.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
