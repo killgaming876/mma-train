@@ -52,7 +52,7 @@ function CameraRig() {
     target.x += pointer.x * 0.35;
     target.y += pointer.y * 0.2;
     camera.position.lerp(target, 0.025);
-    targetLook.set(pointer.x * 0.15, 0.45 + pointer.y * 0.1, 0);
+    targetLook.current.set(pointer.x * 0.15, 0.45 + pointer.y * 0.1, 0);
     look.current.lerp(targetLook.current, 0.035);
     camera.lookAt(look.current);
     const perspective = camera as THREE.PerspectiveCamera;
@@ -89,91 +89,58 @@ function ParticleField() {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    uniforms: { uTime: { value: 0 }, uMouse: { value: new THREE.Vector2() }, uScroll: { value: 0 } },
-    vertexShader: `attribute float aSeed; attribute float aScale; uniform float uTime; uniform vec2 uMouse; uniform float uScroll; varying float vAlpha; void main(){vec3 p=position;float wave=sin(uTime*.22+aSeed+p.x*.08)*.07;p.x+=sin(uTime*.11+aSeed)*.12+uMouse.x*.06;p.y+=cos(uTime*.14+aSeed)*.11+wave;p.z+=sin(uTime*.13+aSeed)*.09+uScroll*.15;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=(1.1+aScale*1.8)*(15.0/max(4.0,-mv.z));vAlpha=.16+.42*(.5+.5*sin(aSeed+uTime*.55));gl_Position=projectionMatrix*mv;}`,
-    fragmentShader: `varying float vAlpha;void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.03,d)*vAlpha;vec3 c=mix(vec3(.24,.58,1.0),vec3(.47,.96,1.0),a);gl_FragColor=vec4(c,a);}`,
+    uniforms: { uTime: { value: 0 }, uScroll: { value: 0 }, uPointer: { value: new THREE.Vector2() } },
+    vertexShader: `attribute float aSeed; attribute float aScale; uniform float uTime; uniform float uScroll; uniform vec2 uPointer; varying float vAlpha; void main(){vec3 p=position;float t=uTime;float flow=sin(p.x*.32+t*.18+aSeed)*.18+cos(p.z*.28+t*.15+aSeed)*.16;p.y+=flow+uScroll*.55;p.x+=sin(t*.12+aSeed)*.12+uPointer.x*.06;p.z+=cos(t*.1+aSeed)*.12+uPointer.y*.06;float wrapped=mod(p.y+6.0,12.0)-6.0;p.y=wrapped;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=(1.3+1.6*(.5+.5*sin(aSeed+t)))*aScale;gl_PointSize*=15.0/max(4.0,-mv.z);vAlpha=.14+.5*(.5+.5*sin(aSeed+t*.52));gl_Position=projectionMatrix*mv;}`,
+    fragmentShader: `varying float vAlpha;void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=smoothstep(.5,.04,d)*vAlpha;vec3 c=mix(vec3(.22,.58,1.0),vec3(.65,.9,1.0),.5+.5*sin(vAlpha*9.0));gl_FragColor=vec4(c,a);}`,
   }), []);
+
   useFrame((state) => {
     material.uniforms.uTime.value = state.clock.elapsedTime;
-    material.uniforms.uMouse.value.set(pointer.x, pointer.y);
     material.uniforms.uScroll.value = scrollProgress;
+    material.uniforms.uPointer.value.set(pointer.x, pointer.y);
     if (ref.current) ref.current.rotation.y = state.clock.elapsedTime * 0.004 + scrollProgress * 0.2;
   });
+
   return <points ref={ref} geometry={geometry} material={material} />;
 }
 
-function SignalRings() {
+function SignalCore() {
   const group = useRef<THREE.Group>(null);
-  const rings = useMemo(() => [
-    { radius: 2.2, opacity: 0.16, tilt: 0.08 },
-    { radius: 3.45, opacity: 0.11, tilt: -0.055 },
-    { radius: 4.8, opacity: 0.075, tilt: 0.035 },
-  ], []);
+  const core = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#07121e', metalness: 0.72, roughness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.12,
+    emissive: '#0b4a7a', emissiveIntensity: 0.25,
+  }), []);
+  const edge = useMemo(() => new THREE.MeshBasicMaterial({ color: '#58b8ff', transparent: true, opacity: 0.3 }), []);
   useFrame((state) => {
     if (!group.current) return;
-    group.current.rotation.z = state.clock.elapsedTime * 0.02;
-    group.current.rotation.y = pointer.x * 0.1 + scrollProgress * 0.4;
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, pointer.x * 0.28 + scrollProgress * Math.PI * 0.85, 0.035);
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, pointer.y * 0.12, 0.035);
+    group.current.position.y = Math.sin(state.clock.elapsedTime * 0.7) * 0.08 + scrollProgress * 0.3;
+    const s = 1.05 + Math.sin(state.clock.elapsedTime * 0.9) * 0.018 + scrollProgress * 0.18;
+    group.current.scale.setScalar(s);
   });
-  return <group ref={group} rotation={[Math.PI * 0.43, 0, 0]} position={[0, 0.35, -1]}>
-    {rings.map((ring) => <mesh key={ring.radius} rotation={[0, 0, ring.tilt]}><torusGeometry args={[ring.radius, 0.012, 12, 160]} /><meshBasicMaterial color="#63b9ff" transparent opacity={ring.opacity} /></mesh>)}
+  return <group ref={group} position={[0, 0.2, -1.8]}>
+    <mesh material={core}><icosahedronGeometry args={[1.55, 5]} /></mesh>
+    <mesh scale={1.08} material={edge}><icosahedronGeometry args={[1.55, 4]} /></mesh>
+    <mesh rotation={[Math.PI / 2, 0, 0]} material={edge}><torusGeometry args={[1.95, 0.012, 12, 160]} /></mesh>
+    <mesh rotation={[0, Math.PI / 3, Math.PI / 2]} material={edge}><torusGeometry args={[2.25, 0.009, 12, 160]} /></mesh>
   </group>;
 }
 
-function Cityscape() {
-  const group = useRef<THREE.Group>(null);
-  const buildings = useMemo(() => Array.from({ length: 84 }, (_, i) => {
-    const lane = i % 21;
-    const depth = Math.floor(i / 21);
-    return {
-      x: (lane - 10) * 0.72 + (Math.random() - 0.5) * 0.25,
-      z: -2.5 - depth * 1.2 - Math.random() * 0.8,
-      y: 0.18 + Math.random() * 2.6 * (1 - depth / 24),
-      w: 0.25 + Math.random() * 0.35,
-    };
-  }), []);
-  useFrame((state) => {
-    if (group.current) group.current.position.z = (state.clock.elapsedTime * 0.012 + scrollProgress * 1.4) % 1;
-  });
-  return <group ref={group} position={[0, -2.5, -5.5]}>
-    {buildings.map((b, i) => <mesh key={i} position={[b.x, b.y, b.z]} scale={[b.w, b.y, b.w]}><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial color="#071019" emissive="#0c3c66" emissiveIntensity={0.24} roughness={0.35} metalness={0.7} /></mesh>)}
-  </group>;
-}
-
-function LiquidField() {
-  const ref = useRef<THREE.Mesh>(null);
-  const material = useMemo(() => new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    uniforms: { uTime: { value: 0 }, uMouse: { value: new THREE.Vector2() }, uScroll: { value: 0 } },
-    vertexShader: `uniform float uTime;uniform vec2 uMouse;uniform float uScroll;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;float d=distance(uv,vec2(.5)+uMouse*.12);p.z+=sin(d*24.0-uTime*1.5)*exp(-d*8.0)*.22;p.z+=sin((uv.x+uv.y+uTime*.05)*18.0)*.04;p.z+=uScroll*.05;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
-    fragmentShader: `uniform float uTime;varying vec2 vUv;void main(){vec2 p=vUv-.5;float r=length(p);float ring=smoothstep(.17,0.0,abs(r-.22))+smoothstep(.28,0.0,abs(r-.36))*.45;float scan=.45+.55*sin(vUv.y*100.0+uTime*.25);float glow=exp(-r*5.0)*.55;vec3 c=vec3(.03,.15,.28)+vec3(0.0,.2,.42)*(ring+glow)*scan;float alpha=.08+ring*.12+glow*.08;gl_FragColor=vec4(c,alpha);}`,
-  }), []);
-  useFrame((state) => {
-    material.uniforms.uTime.value = state.clock.elapsedTime;
-    material.uniforms.uMouse.value.set(pointer.x, pointer.y);
-    material.uniforms.uScroll.value = scrollProgress;
-    if (ref.current) ref.current.rotation.z = state.clock.elapsedTime * 0.004;
-  });
-  return <mesh ref={ref} rotation={[-Math.PI / 2.08, 0, 0]} position={[0, -2.55, -1.5]} scale={[1.8, 1.3, 1]}><planeGeometry args={[14, 14, 80, 80]} /><primitive attach="material" object={material} /></mesh>;
-}
-
-function HeroCore() {
-  const group = useRef<THREE.Group>(null);
-  const shell = useMemo(() => new THREE.MeshPhysicalMaterial({ color: '#07111c', roughness: 0.22, metalness: 0.74, clearcoat: 1, clearcoatRoughness: 0.12, emissive: '#0a3a69', emissiveIntensity: 0.32 }), []);
-  useFrame((state) => {
-    if (!group.current) return;
-    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, pointer.x * 0.32 + scrollProgress * Math.PI * 0.75, 0.035);
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, pointer.y * 0.14, 0.03);
-    group.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.08;
-    group.current.scale.setScalar(1 + scrollProgress * 0.08);
-  });
-  return <group ref={group} position={[0, 0.05, 0]}><mesh material={shell}><icosahedronGeometry args={[1.7, 4]} /></mesh><mesh scale={1.045}><icosahedronGeometry args={[1.7, 4]} /><meshBasicMaterial color="#63b9ff" wireframe transparent opacity={0.07} /></mesh><mesh scale={1.26} rotation={[Math.PI / 2.8, 0, 0]}><torusGeometry args={[1.55, 0.014, 8, 128]} /><meshBasicMaterial color="#65baff" transparent opacity={0.26} /></mesh></group>;
-}
-
-function Scene() {
-  return <><color attach="background" args={['#010305']} /><fog attach="fog" args={['#010305', 7, 25]} /><ambientLight intensity={0.28} color="#b9d8ff" /><directionalLight position={[4, 6, 5]} intensity={1.6} color="#b9dcff" /><pointLight position={[0, 2, 2]} intensity={4.5} distance={12} color="#3e9fff" /><pointLight position={[-4, 0, -4]} intensity={2.4} distance={10} color="#173dff" /><CameraRig /><ParticleField /><SignalRings /><Cityscape /><LiquidField /><HeroCore /></>;
+function BackdropScene() {
+  return <>
+    <color attach="background" args={['#010204']} />
+    <fog attach="fog" args={['#010204', 8, 27]} />
+    <ambientLight intensity={0.42} color="#9fdcff" />
+    <directionalLight position={[4, 6, 5]} intensity={1.7} color="#d9efff" />
+    <pointLight position={[-4, 2, 2]} intensity={2.6} distance={12} color="#378dff" />
+    <pointLight position={[4, -1, -2]} intensity={1.5} distance={10} color="#59c7ff" />
+    <CameraRig />
+    <ParticleField />
+    <SignalCore />
+  </>;
 }
 
 export function CinematicBackdrop() {
-  return <div className="cinematic-backdrop dark-awwwards-world" aria-hidden="true"><InputBus /><Canvas dpr={[1, 1.35]} camera={{ position: [0, 0.35, 9.8], fov: 45 }} gl={{ antialias: true, powerPreference: 'high-performance', alpha: false }}><Scene /></Canvas></div>;
+  return <div className="cinematic-backdrop red-only-backdrop" aria-hidden="true"><InputBus /><Canvas dpr={[1, 1.35]} camera={{ position: [0, 0.35, 9.8], fov: 45 }} gl={{ antialias: true, powerPreference: 'high-performance', alpha: false }}><BackdropScene /></Canvas></div>;
 }
