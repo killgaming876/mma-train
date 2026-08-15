@@ -1,0 +1,124 @@
+:root{
+  --lime:#ff2d46;
+  --lime-hot:#ff6677;
+  --lime-soft:#ff9eaa;
+  --orange:#ff5a3d;
+  --red:#ff2d46;
+  --glass-red:rgba(255,45,70,.11);
+  --glass-border:rgba(255,110,128,.18);
+  --glass-shadow:rgba(0,0,0,.52);
+}
+
+html{scroll-behavior:smooth}
+body{background:#030304!important}
+button,input,select{accent-color:#ff2d46}
+
+/* Standard site-wide glass navbar */
+.glass-commandbar{top:0!important;left:0!important;right:0!important;height:70px!important;border-radius:0 0 20px 20px!important;border-color:rgba(255,105,122,.16)!important;background:linear-gradient(105deg,rgba(13,8,10,.82),rgba(5,5,7,.68) 55%,rgba(22,7,10,.78))!important;box-shadow:0 18px 70px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.065),0 0 42px rgba(255,35,58,.055)!important;backdrop-filter:blur(28px) saturate(155%)!important}
+.glass-commandbar:before{background:linear-gradient(100deg,rgba(255,45,70,.08),transparent 38%,rgba(255,120,140,.04))!important}
+.glass-commandbar:after{background:linear-gradient(90deg,transparent,rgba(255,100,120,.12),transparent)!important}
+.glass-brand:hover{color:#fff4f5!important}
+.brand-symbol{color:#ff3650!important;border-color:#ff3650!important;box-shadow:0 0 16px rgba(255,45,70,.22)}
+.glass-icon-button:hover{background:rgba(255,45,70,.10)!important;border-color:rgba(255,45,70,.4)!important;color:#ff8491!important}
+.glass-status-pill:hover{border-color:rgba(255,45,70,.42)!important;color:#ff7a89!important;box-shadow:0 0 24px rgba(255,45,70,.10)!important}
+.status-dot,.live-pulse{background:#ff324c!important;box-shadow:0 0 12px #ff324c!important}
+.signal-bars{color:#ff3d54!important}
+
+/* Sideways command rail */
+.glass-sidebar{left:16px!important;top:86px!important;bottom:16px!important;width:236px!important;border-color:rgba(255,105,122,.15)!important;background:linear-gradient(160deg,rgba(14,8,10,.76),rgba(5,5,7,.62))!important;box-shadow:0 30px 95px rgba(0,0,0,.54),inset 0 1px rgba(255,255,255,.05),0 0 42px rgba(255,35,58,.035)!important;backdrop-filter:blur(32px) saturate(170%)!important}
+.glass-sidebar:before{background:linear-gradient(180deg,rgba(255,45,70,.055),transparent 40%,rgba(255,255,255,.02))!important}
+.glass-sidebar:after{border-color:rgba(255,45,70,.09)!important;box-shadow:0 0 70px rgba(255,45,70,.045)!important}
+.glass-subhead{border-bottom-color:rgba(255,100,120,.10)!important;color:#826b70!important}
+.sidebar-orbit:before{background:linear-gradient(90deg,rgba(255,45,70,.5),transparent)!important}
+.sidebar-orbit span{border-color:rgba(255,45,70,.65)!important}
+.glass-nav-link:before{background:linear-gradient(100deg,rgba(255,45,70,.12),transparent 72%)!important}
+.glass-nav-link:hover,.glass-nav-link.active{border-color:rgba(255,45,70,.18)!important;background:rgba(255,255,255,.035)!important;box-shadow:inset 0 1px rgba(255,255,255,.03),0 9px 30px rgba(0,0,0,.2),0 0 22px rgba(255,45,70,.035)!important}
+.glass-nav-link:hover .nav-icon,.glass-nav-link.active .nav-icon{background:rgba(255,45,70,.09)!important;border-color:rgba(255,45,70,.36)!important;color:#ff7584!important}
+.nav-active-dot{background:#ff344e!important;box-shadow:0 0 15px #ff344e!important}
+.sidebar-command-card{border-color:rgba(255,105,122,.12)!important;background:linear-gradient(145deg,rgba(255,45,70,.08),rgba(255,255,255,.025))!important}
+.sidebar-command-card:after{background:linear-gradient(90deg,transparent,#ff344f,transparent)!important}
+.sidebar-command-card button:hover{color:#ff7584!important}
+
+/* Page atmosphere: each route gets its own visual field */
+.page-shell{background:linear-gradient(180deg,rgba(3,3,5,.52),rgba(3,3,5,.82))!important}
+.page-shell:before{background:radial-gradient(circle at 72% 28%,rgba(255,45,70,.075),transparent 28%),radial-gradient(circle at 10% 86%,rgba(255,76,64,.055),transparent 24%)!important}
+.dashboard-page:before,.training-page:before,.anatomy-page:before,.nutrition-page:before,.progress-page:before,.profile-page:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.75}
+.dashboard-page:before{background:radial-gradient(circle at 78% 26%,rgba(255,41,62,.11),transparent 21%),linear-gradient(130deg,rgba(36,5,10,.32),transparent 52%),repeating-linear-gradient(90deg,transparent 0 79px,rgba(255,45,70,.035) 80px 81px)}
+.training-page:before{background:radial-gradient(circle at 28% 36%,rgba(255,70,48,.12),transparent 20%),radial-gradient(circle at 80% 74%,rgba(255,20,50,.09),transparent 24%),repeating-linear-gradient(0deg,transparent 0 49px,rgba(255,74,82,.032) 50px 51px)}
+.anatomy-page:before{background:radial-gradient(circle at 54% 38%,rgba(255,34,58,.17),transparent 24%),linear-gradient(90deg,rgba(18,3,8,.62),transparent 52%),repeating-linear-gradient(90deg,transparent 0 44px,rgba(255,62,78,.035) 45px 46px),repeating-linear-gradient(0deg,transparent 0 44px,rgba(255,62,78,.024) 45px 46px)}
+.nutrition-page:before{background:radial-gradient(circle at 75% 18%,rgba(255,89,38,.13),transparent 20%),radial-gradient(circle at 16% 76%,rgba(255,28,59,.09),transparent 22%),conic-gradient(from 0deg at 78% 54%,transparent 0 18%,rgba(255,76,54,.035) 20%,transparent 25%)}
+.progress-page:before{background:radial-gradient(circle at 70% 52%,rgba(255,38,65,.12),transparent 22%),linear-gradient(180deg,rgba(40,5,11,.28),transparent 38%),repeating-linear-gradient(90deg,transparent 0 59px,rgba(255,45,70,.03) 60px 61px)}
+.profile-page:before{background:radial-gradient(circle at 84% 26%,rgba(255,55,78,.11),transparent 19%),radial-gradient(circle at 22% 72%,rgba(255,40,44,.07),transparent 20%),linear-gradient(135deg,rgba(28,5,9,.26),transparent 54%)}
+
+/* 3D materials and cards */
+.glass-panel,.signal-panel,.discipline-panel,.roadmap-panel,.training-card,.anatomy-card,.nutrition-card,.progress-card,.profile-card{border-color:rgba(255,110,130,.15)!important;background:linear-gradient(125deg,rgba(22,10,13,.73),rgba(6,6,8,.65))!important;box-shadow:inset 0 1px rgba(255,255,255,.04),0 24px 80px rgba(0,0,0,.28)!important}
+.glass-panel:hover,.signal-panel:hover,.discipline-panel:hover,.roadmap-panel:hover,.training-card:hover,.anatomy-card:hover,.nutrition-card:hover,.progress-card:hover,.profile-card:hover{border-color:rgba(255,45,70,.3)!important;box-shadow:0 24px 75px rgba(0,0,0,.36),0 0 42px rgba(255,45,70,.065)!important}
+.magnetic-button{border-color:#ff324c!important;background:#ff324c!important;color:#090304!important}
+.magnetic-button.ghost{background:transparent!important;color:#ff7180!important;border-color:rgba(255,45,70,.54)!important}
+.magnetic-button:hover{box-shadow:0 15px 42px rgba(255,45,70,.17),0 0 30px rgba(255,45,70,.10)!important}
+.progress-fill{background:#ff334d!important;box-shadow:0 0 14px rgba(255,45,70,.5)!important}
+.text-link{color:#ff6677!important}
+.page-heading h1,.today-title h2,.roadmap-copy strong,.discipline-panel h3{color:#f6eef0!important;text-shadow:0 0 34px rgba(255,45,70,.08)!important}
+
+/* Anatomy: clinical red specimen theatre */
+.anatomy-stage,.anatomy-info{border-color:rgba(255,80,100,.2)!important}
+.anatomy-stage{background:radial-gradient(circle at 50% 48%,rgba(255,34,57,.05),rgba(5,5,7,.76) 60%)!important}
+.anatomy-stage-ui button,.anatomy-tools span{color:#ff7180!important}
+.target-ping{background:#ff334e!important;box-shadow:0 0 14px #ff334e!important}
+
+/* Footer */
+.beast-footer{background:linear-gradient(160deg,#020304,#0e0307 55%,#040304)!important;border-top-color:rgba(255,95,115,.14)!important}
+.beast-footer:before{background:radial-gradient(circle at 75% 38%,rgba(255,37,62,.12),transparent 22%),radial-gradient(circle at 8% 80%,rgba(180,20,35,.09),transparent 25%)!important}
+.footer-brand-mark{color:#ff4f63!important;border-color:rgba(255,45,70,.4)!important;background:rgba(255,45,70,.06)!important;box-shadow:0 0 30px rgba(255,45,70,.06)!important}
+.footer-status,.footer-brand:hover .footer-brand-mark{color:#ff6072!important}
+.footer-status i{background:#ff334d!important;box-shadow:0 0 14px #ff334d!important}
+.footer-live-readout strong,.footer-manifesto em,.footer-link:hover,.footer-primary{color:#ff4c61!important}
+.footer-primary{border-color:#ff334d!important;background:#ff334d!important;color:#080304!important}
+.footer-secondary:hover{color:#ff6272!important;border-color:rgba(255,45,70,.38)!important}
+.footer-signal-card:hover{border-color:rgba(255,45,70,.3)!important;box-shadow:0 0 32px rgba(255,45,70,.055)!important}
+
+/* Landing red conversion */
+.forge-landing{background:#030304!important}
+.forge-landing .hero-vignette{background:radial-gradient(circle at 50% 44%,transparent 10%,rgba(3,3,4,.12) 40%,rgba(3,3,4,.92) 100%),linear-gradient(90deg,rgba(3,3,4,.72),transparent 48%,rgba(3,3,4,.64))!important}
+.forge-landing .hero-micro,.forge-landing .title-dot,.forge-landing .hero-kicker span:first-child,.forge-landing .hero-meta span:first-child{color:#ff465c!important}
+.forge-landing .ghost-cta{border-color:rgba(255,45,70,.34)!important;color:#ff7380!important}
+.forge-landing .ghost-cta:hover{border-color:#ff334d!important;color:#ff5668!important}
+.forge-landing .hero-ring{border-color:rgba(255,45,70,.26)!important;box-shadow:0 0 70px rgba(255,45,70,.07),inset 0 0 70px rgba(255,45,70,.04)!important}
+.forge-landing .hero-ring:before,.forge-landing .hero-ring:after{border-color:rgba(255,45,70,.22)!important}
+.forge-landing .hero-bottom-scroll{color:#88757a!important}
+.forge-landing .eyebrow-line{border-color:#ff334d!important}
+.forge-landing .hero-word.title-accent,.forge-landing .hero-title{color:#f3edef!important}
+.forge-landing .hero-word.title-offset{color:#a9979c!important}
+.forge-landing .forge-grid{background-image:linear-gradient(rgba(255,60,80,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,60,80,.10) 1px,transparent 1px)!important}
+.forge-landing .forge-progress strong{color:#ff4057!important}
+.forge-landing .forge-progress i{background:linear-gradient(#ff334d,transparent)!important}
+.forge-landing .forge-side-rail,.forge-landing .hero-kicker,.forge-landing .hero-meta{color:#735e63!important}
+.forge-landing .forge-noise{opacity:.055!important}
+
+/* Responsive quality strategy: preserve composition, reduce expensive UI chrome first */
+@media (max-width: 1100px){
+  .content:not(.content-landing){padding-left:0!important}
+  .desktop-sidebar{display:none!important}
+  .mobile-menu{display:grid!important}
+}
+@media (max-width: 760px){
+  .glass-commandbar{height:62px!important;border-radius:0 0 16px 16px!important;padding-inline:10px!important}
+  .topbar-status{display:none!important}
+  .topbar-id{font-size:8px!important;padding:7px 9px!important}
+  .glass-sidebar{width:min(300px,calc(100vw - 28px))!important}
+  .content:not(.content-landing){padding-top:72px!important}
+  .page-shell{padding-inline:5vw!important}
+  .glass-mobile-nav{display:flex!important}
+  .beast-footer{min-height:820px!important}
+  .beast-footer-inner{padding-top:54px!important}
+}
+@media (max-width: 520px){
+  .nav-copy small{display:none}
+  .glass-sidebar{top:10px!important;bottom:10px!important}
+  .footer-main-grid{grid-template-columns:1fr!important}
+  .footer-command-row{align-items:flex-start!important;flex-direction:column!important}
+  .footer-live-readout{align-self:flex-start!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .glass-commandbar:after,.glass-sidebar:after,.beast-footer-scan{animation:none!important}
+}
